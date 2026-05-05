@@ -1,46 +1,58 @@
 <x-app-layout>
-    <div class="p-6 max-w-6xl mx-auto">
-        <h1 class="text-xl font-bold mb-4">Progres Kerja</h1>
+    <div class="p-6 max-w-7xl mx-auto">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-green-950">Progres Kerja</h1>
+            <p class="text-gray-500 mt-1">Pantau laporan kerja dan file yang dikirim karyawan.</p>
+        </div>
 
         @if($progress->count() == 0)
-            <div class="bg-yellow-100 text-yellow-800 p-4 rounded">
+            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-5 rounded-2xl">
                 Belum ada progres kerja yang masuk.
             </div>
         @endif
 
-        @foreach($progress as $item)
-            <div class="bg-white p-4 mb-4 rounded shadow">
-                <p>
-                    <strong>Nama:</strong>
-                    {{ $item->attendance->user->name ?? 'User tidak ditemukan' }}
-                </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            @foreach($progress as $item)
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h2 class="font-bold text-gray-800">
+                                {{ $item->attendance->user->name ?? 'User tidak ditemukan' }}
+                            </h2>
+                            <p class="text-sm text-gray-500">
+                                {{ $item->created_at->format('d-m-Y H:i') }}
+                            </p>
+                        </div>
 
-                <p>
-                    <strong>Tanggal:</strong>
-                    {{ $item->created_at->format('d-m-Y H:i') }}
-                </p>
-
-                <p class="mt-2">
-                    <strong>Deskripsi:</strong><br>
-                    {{ $item->description }}
-                </p>
-
-                @if($item->files && $item->files->count())
-                    <div class="mt-3">
-                        <p class="font-semibold">File:</p>
-
-                        @foreach($item->files as $file)
-                            <a href="{{ asset('storage/' . $file->file_path) }}"
-                               target="_blank"
-                               class="text-blue-600 block">
-                                {{ $file->file_name }}
-                            </a>
-                        @endforeach
+                        <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                            Progres
+                        </span>
                     </div>
-                @else
-                    <p class="text-gray-500 mt-2">Tidak ada file.</p>
-                @endif
-            </div>
-        @endforeach
+
+                    <div class="bg-gray-50 rounded-xl p-4 text-gray-700 text-sm leading-relaxed">
+                        {{ $item->description }}
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="font-semibold text-gray-700 mb-2">Lampiran File</p>
+
+                        @if($item->files && $item->files->count())
+                            <div class="space-y-2">
+                                @foreach($item->files as $file)
+                                    <a href="{{ asset('storage/' . $file->file_path) }}"
+                                       target="_blank"
+                                       class="flex items-center justify-between bg-green-50 text-green-800 px-4 py-2 rounded-xl hover:bg-green-100 transition">
+                                        <span class="truncate">{{ $file->file_name }}</span>
+                                        <span class="text-xs">Buka →</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-gray-400 text-sm">Tidak ada file.</p>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
     </div>
 </x-app-layout>
