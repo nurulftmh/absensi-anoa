@@ -125,38 +125,27 @@
                 @endif
             </div>
 
-            @if($attendance && $attendance->status === 'hadir')
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">Progres Kerja</h2>
-                    <p class="text-gray-500 text-sm mb-5">
-                        Tulis deskripsi kerja dan unggah file pendukung bila diperlukan.
-                    </p>
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Progres Kerja</h2>
+                <p class="text-gray-500 text-sm mb-5">
+                    Upload dan lihat riwayat progres kerja pada halaman khusus.
+                </p>
 
-                    <form action="{{ route('work.progress.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Progres</label>
-                        <textarea name="description" rows="5"
-                                  class="w-full border-gray-200 rounded-2xl shadow-sm focus:border-green-700 focus:ring-green-700 mb-4"
-                                  placeholder="Contoh: Menyelesaikan laporan harian, revisi dokumen, koordinasi tim..."></textarea>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload File</label>
-                        <input type="file" name="files[]" multiple
-                               class="w-full border border-gray-200 rounded-2xl p-3 text-sm mb-4">
-
-                        <button class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl shadow transition">
-                            Simpan Progres
-                        </button>
-                    </form>
-                </div>
-            @else
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">Progres Kerja</h2>
-                    <div class="bg-gray-50 text-gray-500 p-5 rounded-2xl text-sm">
-                        Form progres kerja akan aktif setelah kamu melakukan absen masuk.
+                @if($attendance && $attendance->status === 'hadir')
+                    <div class="bg-green-50 text-green-800 p-4 rounded-2xl text-sm mb-4">
+                        Kamu sudah absen masuk hari ini. Form progres kerja sudah aktif.
                     </div>
-                </div>
-            @endif
+                @else
+                    <div class="bg-gray-50 text-gray-500 p-4 rounded-2xl text-sm mb-4">
+                        Form progres kerja aktif setelah kamu melakukan absen masuk.
+                    </div>
+                @endif
+
+                <a href="{{ route('work.progress.page') }}"
+                   class="inline-block w-full text-center bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl shadow transition">
+                    Buka Halaman Progres Kerja
+                </a>
+            </div>
 
         </div>
 

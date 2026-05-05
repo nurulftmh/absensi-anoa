@@ -98,7 +98,7 @@
                 </div>
 
                 <p class="text-green-100 mt-6 max-w-2xl">
-                    Dashboard ini membantu admin memantau kehadiran, izin, alpa, progres kerja, dan pengelolaan user secara lebih rapi, cepat, dan transparan.
+                    Dashboard ini membantu Pimpinan memantau kehadiran, izin, alpa, progres kerja, dan pengelolaan user secara lebih rapi, cepat, dan transparan.
                 </p>
             </div>
 

@@ -3,8 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveRequestController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminUserController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,7 +37,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/absen-pulang', [AttendanceController::class, 'checkOut'])
         ->name('attendance.checkout');
 
-    // PROGRES
+    // PROGRES KERJA USER
+    Route::get('/progres-kerja', [AttendanceController::class, 'progressPage'])
+        ->name('work.progress.page');
+
     Route::post('/progres-kerja', [AttendanceController::class, 'storeProgress'])
         ->name('work.progress.store');
 
@@ -62,14 +65,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/progres', [AttendanceController::class, 'adminProgress'])
         ->name('admin.progress.index');
 
+    // ADMIN USER
     Route::get('/admin/users', [AdminUserController::class, 'index'])
-    ->name('admin.users.index');
+        ->name('admin.users.index');
 
     Route::patch('/admin/users/{user}/role', [AdminUserController::class, 'updateRole'])
-    ->name('admin.users.updateRole');
+        ->name('admin.users.updateRole');
 
     Route::delete('/admin/users/{user}', [AdminUserController::class, 'destroy'])
-    ->name('admin.users.destroy');
+        ->name('admin.users.destroy');
 });
 
 /*
@@ -78,9 +82,14 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';

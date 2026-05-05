@@ -22,7 +22,15 @@ class AttendanceController extends Controller
             ->latest()
             ->get();
 
-        return view('dashboard', compact('attendance', 'attendances'));
+        // TAMBAHAN: ambil progres kerja dan file yang diupload oleh karyawan login
+        $workProgresses = WorkProgress::with('files')
+            ->whereHas('attendance', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->latest()
+            ->get();
+
+        return view('dashboard', compact('attendance', 'attendances', 'workProgresses'));
     }
 
     public function checkIn()
@@ -78,56 +86,73 @@ class AttendanceController extends Controller
     }
 
     public function storeProgress(Request $request)
-{
-    $request->validate([
-        'description' => 'required|string',
-        'files.*' => 'nullable|file|max:5120',
-    ]);
+    {
+        $request->validate([
+            'description' => 'required|string',
+            'files.*' => 'nullable|file|max:5120',
+        ]);
 
+        $today = now()->toDateString();
+
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->where('date', $today)
+            ->first();
+
+        if (!$attendance) {
+            return back()->with('error', 'Silakan absen masuk dulu.');
+        }
+
+        $progress = WorkProgress::create([
+            'attendance_id' => $attendance->id,
+            'description' => $request->description,
+        ]);
+
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $path = $file->store('work-files', 'public');
+
+                WorkFile::create([
+                    'work_progress_id' => $progress->id,
+                    'file_path' => $path,
+                    'file_name' => $file->getClientOriginalName(),
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Progres kerja berhasil disimpan.');
+    }
+
+    public function adminAttendance()
+    {
+        $attendances = Attendance::with('user')->latest()->get();
+
+        return view('admin.attendance', compact('attendances'));
+    }
+
+    public function adminProgress()
+    {
+        $progress = WorkProgress::with(['attendance.user', 'files'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.progress', compact('progress'));
+    }
+
+    public function progressPage()
+{
     $today = now()->toDateString();
 
     $attendance = Attendance::where('user_id', auth()->id())
         ->where('date', $today)
         ->first();
 
-    if (!$attendance) {
-        return back()->with('error', 'Silakan absen masuk dulu.');
-    }
-
-    $progress = WorkProgress::create([
-        'attendance_id' => $attendance->id,
-        'description' => $request->description,
-    ]);
-
-    if ($request->hasFile('files')) {
-        foreach ($request->file('files') as $file) {
-            $path = $file->store('work-files', 'public');
-
-            WorkFile::create([
-                'work_progress_id' => $progress->id,
-                'file_path' => $path,
-                'file_name' => $file->getClientOriginalName(),
-            ]);
-        }
-    }
-
-    return back()->with('success', 'Progres kerja berhasil disimpan.');
-}
-
-public function adminAttendance()
-{
-    $attendances = Attendance::with('user')->latest()->get();
-
-    return view('admin.attendance', compact('attendances'));
-}
-
-public function adminProgress()
-{
-    $progress = WorkProgress::with(['attendance.user', 'files'])
-        ->orderBy('created_at', 'desc')
+    $workProgresses = WorkProgress::with('files')
+        ->whereHas('attendance', function ($query) {
+            $query->where('user_id', auth()->id());
+        })
+        ->latest()
         ->get();
 
-    return view('admin.progress', compact('progress'));
+    return view('work-progress', compact('attendance', 'workProgresses'));
 }
-
 }
