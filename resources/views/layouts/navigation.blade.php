@@ -34,6 +34,10 @@
                         <x-nav-link :href="route('admin.progress.index')" :active="request()->routeIs('admin.progress.index')">
                             Progres
                         </x-nav-link>
+
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                             User
+                        </x-nav-link>
                     @endif
                 </div>
             </div>

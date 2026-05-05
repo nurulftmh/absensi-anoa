@@ -1,15 +1,18 @@
 <x-app-layout>
     <div class="p-6 max-w-7xl mx-auto">
 
+        <!-- HEADER -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-green-950">Dashboard Admin</h1>
             <p class="text-gray-500 mt-1">
-                Kelola absensi, izin, dan progres kerja karyawan PT Anoa Sejahtera Mandiri.
+                Kelola absensi, izin, progres kerja, dan user karyawan PT Anoa Sejahtera Mandiri.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- MAIN MENU -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
+            <!-- ABSENSI -->
             <a href="{{ route('admin.attendance.index') }}"
                class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition">
                 <div class="w-12 h-12 bg-green-100 text-green-800 rounded-xl flex items-center justify-center mb-4 text-xl font-bold">
@@ -26,6 +29,7 @@
                 </span>
             </a>
 
+            <!-- IZIN -->
             <a href="{{ route('admin.leave.index') }}"
                class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition">
                 <div class="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center mb-4 text-xl font-bold">
@@ -42,6 +46,7 @@
                 </span>
             </a>
 
+            <!-- PROGRES -->
             <a href="{{ route('admin.progress.index') }}"
                class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition">
                 <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mb-4 text-xl font-bold">
@@ -58,10 +63,29 @@
                 </span>
             </a>
 
+            <!-- USER MANAGEMENT -->
+            <a href="{{ route('admin.users.index') }}"
+               class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-xl flex items-center justify-center mb-4 text-xl font-bold">
+                    👤
+                </div>
+
+                <h2 class="text-lg font-bold text-gray-800">Kelola karyawan</h2>
+                <p class="text-gray-500 mt-2 text-sm">
+                    Ubah role user menjadi admin atau hapus akun user.
+                </p>
+
+                <span class="inline-block mt-5 text-purple-700 font-semibold">
+                    Kelola Karyawan →
+                </span>
+            </a>
+
         </div>
 
+        <!-- BOTTOM SECTION -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
+            <!-- COMPANY INFO -->
             <div class="lg:col-span-2 bg-gradient-to-r from-green-950 to-green-800 text-white rounded-3xl p-8 shadow">
                 <div class="flex items-center gap-4">
                     <img src="{{ asset('images/logo.png') }}" class="w-16 h-16 object-contain bg-white rounded-2xl p-2">
@@ -74,10 +98,11 @@
                 </div>
 
                 <p class="text-green-100 mt-6 max-w-2xl">
-                    Dashboard ini membantu admin memantau kehadiran, izin, alpa, dan progres kerja karyawan secara lebih rapi, cepat, dan transparan.
+                    Dashboard ini membantu admin memantau kehadiran, izin, alpa, progres kerja, dan pengelolaan user secara lebih rapi, cepat, dan transparan.
                 </p>
             </div>
 
+            <!-- QUICK MENU -->
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-800 mb-4">Menu Cepat</h3>
 
@@ -95,6 +120,11 @@
                     <a href="{{ route('admin.progress.index') }}"
                        class="block p-4 rounded-xl bg-gray-50 hover:bg-blue-50 transition">
                         Progres Kerja
+                    </a>
+
+                    <a href="{{ route('admin.users.index') }}"
+                       class="block p-4 rounded-xl bg-gray-50 hover:bg-purple-50 transition">
+                        Kelola User
                     </a>
                 </div>
             </div>

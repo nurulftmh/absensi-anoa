@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveRequestController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminUserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,6 +61,15 @@ Route::middleware(['auth'])->group(function () {
     // ADMIN PROGRES
     Route::get('/admin/progres', [AttendanceController::class, 'adminProgress'])
         ->name('admin.progress.index');
+
+    Route::get('/admin/users', [AdminUserController::class, 'index'])
+    ->name('admin.users.index');
+
+    Route::patch('/admin/users/{user}/role', [AdminUserController::class, 'updateRole'])
+    ->name('admin.users.updateRole');
+
+    Route::delete('/admin/users/{user}', [AdminUserController::class, 'destroy'])
+    ->name('admin.users.destroy');
 });
 
 /*
