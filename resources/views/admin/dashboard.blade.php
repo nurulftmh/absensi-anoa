@@ -5,12 +5,12 @@
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-green-950">Dashboard Admin</h1>
             <p class="text-gray-500 mt-1">
-                Kelola absensi, izin, progres kerja, dan user karyawan PT Anoa Sejahtera Mandiri.
+                Kelola absensi, izin, progres kerja, manuscript, dan user karyawan PT Anoa Sejahtera Mandiri.
             </p>
         </div>
 
         <!-- MAIN MENU -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
 
             <!-- ABSENSI -->
             <a href="{{ route('admin.attendance.index') }}"
@@ -63,6 +63,23 @@
                 </span>
             </a>
 
+            <!-- MANUSCRIPT -->
+            <a href="{{ route('admin.manuscripts.index') }}"
+               class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition">
+                <div class="w-12 h-12 bg-red-100 text-red-700 rounded-xl flex items-center justify-center mb-4 text-xl font-bold">
+                    📄
+                </div>
+
+                <h2 class="text-lg font-bold text-gray-800">Data Manuscript</h2>
+                <p class="text-gray-500 mt-2 text-sm">
+                    Lihat manuscript yang diunggah oleh karyawan.
+                </p>
+
+                <span class="inline-block mt-5 text-red-700 font-semibold">
+                    Lihat Manuscript →
+                </span>
+            </a>
+
             <!-- USER MANAGEMENT -->
             <a href="{{ route('admin.users.index') }}"
                class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition">
@@ -70,7 +87,7 @@
                     👤
                 </div>
 
-                <h2 class="text-lg font-bold text-gray-800">Kelola karyawan</h2>
+                <h2 class="text-lg font-bold text-gray-800">Kelola Karyawan</h2>
                 <p class="text-gray-500 mt-2 text-sm">
                     Ubah role user menjadi admin atau hapus akun user.
                 </p>
@@ -88,7 +105,9 @@
             <!-- COMPANY INFO -->
             <div class="lg:col-span-2 bg-gradient-to-r from-green-950 to-green-800 text-white rounded-3xl p-8 shadow">
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('images/logo.png') }}" class="w-16 h-16 object-contain bg-white rounded-2xl p-2">
+                    <img src="{{ asset('images/logo.png') }}"
+                         class="w-16 h-16 object-contain bg-white rounded-2xl p-2">
+
                     <div>
                         <h2 class="text-2xl font-bold">PT Anoa Sejahtera Mandiri</h2>
                         <p class="text-green-100 text-sm mt-1">
@@ -98,7 +117,7 @@
                 </div>
 
                 <p class="text-green-100 mt-6 max-w-2xl">
-                    Dashboard ini membantu Pimpinan memantau kehadiran, izin, alpa, progres kerja, dan pengelolaan user secara lebih rapi, cepat, dan transparan.
+                    Dashboard ini membantu Pimpinan memantau kehadiran, izin, alpa, progres kerja, manuscript, dan pengelolaan user secara lebih rapi, cepat, dan transparan.
                 </p>
             </div>
 
@@ -122,9 +141,14 @@
                         Progres Kerja
                     </a>
 
+                    <a href="{{ route('admin.manuscripts.index') }}"
+                       class="block p-4 rounded-xl bg-gray-50 hover:bg-red-50 transition">
+                        Data Manuscript
+                    </a>
+
                     <a href="{{ route('admin.users.index') }}"
                        class="block p-4 rounded-xl bg-gray-50 hover:bg-purple-50 transition">
-                        Kelola User
+                        Kelola Karyawan
                     </a>
                 </div>
             </div>

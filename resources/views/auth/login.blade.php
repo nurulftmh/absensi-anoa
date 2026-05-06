@@ -3,7 +3,7 @@
 
             <div class="text-center mb-6">
                 <img src="{{ asset('images/logo.png') }}" class="w-24 mx-auto mb-4" alt="Logo">
-                <h1 class="text-2xl font-bold text-green-950">Login Sistem</h1>
+                <h1 class="text-2xl font-bold text-green-950">Login</h1>
                 <p class="text-sm text-gray-500 mt-1">PT Anoa Sejahtera Mandiri</p>
             </div>
 

@@ -145,6 +145,13 @@
                    class="inline-block w-full text-center bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl shadow transition">
                     Buka Halaman Progres Kerja
                 </a>
+
+         <a href="{{ route('manuscripts.index') }}"
+   class="block p-4 rounded-xl bg-gray-50 hover:bg-indigo-50 transition">
+    Manajemen Manuscript
+</a>
+
+
             </div>
 
         </div>
@@ -218,6 +225,8 @@
                                     </td>
                                 </tr>
                             @endforelse
+
+                   
                         </tbody>
                     </table>
                 </div>

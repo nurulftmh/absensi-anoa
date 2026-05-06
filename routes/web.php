@@ -5,6 +5,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ManuscriptController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,6 +45,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/progres-kerja', [AttendanceController::class, 'storeProgress'])
         ->name('work.progress.store');
 
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/manuscripts', [ManuscriptController::class, 'index'])
+        ->name('manuscripts.index');
+
+    Route::post('/manuscripts', [ManuscriptController::class, 'store'])
+        ->name('manuscripts.store');
+
+    Route::patch('/manuscripts/{id}', [ManuscriptController::class, 'update'])
+        ->name('manuscripts.update');
+
+    Route::delete('/manuscripts/{id}', [ManuscriptController::class, 'destroy'])
+        ->name('manuscripts.destroy');
+});
+
+
     // IZIN
     Route::post('/izin', [LeaveRequestController::class, 'store'])
         ->name('leave.store');
@@ -74,6 +91,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/admin/users/{user}', [AdminUserController::class, 'destroy'])
         ->name('admin.users.destroy');
+
+    Route::get('/admin/manuscripts', [ManuscriptController::class, 'adminIndex'])
+    ->name('admin.manuscripts.index');
+    
 });
 
 /*
