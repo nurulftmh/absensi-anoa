@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
 <x-app-layout>
     <div class="p-6 max-w-7xl mx-auto">
 
@@ -8,6 +11,27 @@
             <p class="text-gray-500 mt-1">
                 Lihat seluruh manuscript yang diunggah oleh karyawan.
             </p>
+            <form action="{{ route('admin.manuscripts.index') }}" method="GET" class="mt-5">
+    <div class="flex flex-col md:flex-row gap-3">
+        <input type="text"
+               name="search"
+               value="{{ request('search') }}"
+               placeholder="Cari karyawan, penulis, judul, jurnal, status, atau keterangan..."
+               class="w-full rounded-2xl border-gray-200 shadow-sm focus:border-green-700 focus:ring-green-700">
+
+        <button type="submit"
+                class="bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-2xl font-semibold transition">
+            Cari
+        </button>
+
+        @if(request('search'))
+            <a href="{{ route('admin.manuscripts.index') }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-semibold transition text-center">
+                Reset
+            </a>
+        @endif
+    </div>
+</form>
         </div>
 
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -62,14 +86,76 @@
                                 </td>
 
                                 <td class="p-4 text-gray-700">
-                                    {{ $item->journal }}
-                                </td>
+
+    @if(Str::startsWith($item->journal, ['http://', 'https://']))
+
+        <a href="{{ $item->journal }}"
+           target="_blank"
+           class="text-blue-600 hover:text-blue-800 underline font-medium">
+            Buka Jurnal
+        </a>
+
+    @else
+
+        {{ $item->journal }}
+
+    @endif
+
+</td>
 
                                 <td class="p-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+
+                                @if($item->status == 'On Progress')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200 shadow-sm">
+                                        🚧 On Progress
+                                    </span>
+
+                                @elseif($item->status == 'Draft')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200 shadow-sm">
+                                        📝 Draft
+                                    </span>
+
+                                @elseif($item->status == 'Submitted')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200 shadow-sm">
+                                        📤 Submitted
+                                    </span>
+
+                                @elseif($item->status == 'Under Review')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700 border border-yellow-200 shadow-sm">
+                                        🔍 Under Review
+                                    </span>
+
+                                @elseif($item->status == 'Accepted')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200 shadow-sm">
+                                        ✅ Accepted
+                                    </span>
+
+                                @elseif($item->status == 'Rejected')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200 shadow-sm">
+                                        ❌ Rejected
+                                    </span>
+
+                                @elseif($item->status == 'Published')
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200 shadow-sm">
+                                        🚀 Published
+                                    </span>
+
+                                @else
+
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200 shadow-sm">
                                         {{ $item->status }}
                                     </span>
-                                </td>
+
+                                @endif
+
+                            </td>
 
                                 <td class="p-4 text-gray-600">
                                     {{ $item->description ?? '-' }}
@@ -85,7 +171,10 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
+                <div class="p-6">
+    {{ $manuscripts->links() }}
+</div>
+           </div>
         </div>
 
     </div>

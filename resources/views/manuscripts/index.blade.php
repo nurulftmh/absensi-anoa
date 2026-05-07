@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
 <x-app-layout>
 
 <div class="p-6 max-w-7xl mx-auto">
@@ -10,6 +13,7 @@
         <p class="text-gray-500 mt-1">
             Input dan kelola data manuscript karyawan.
         </p>
+        
     </div>
 
     @if(session('success'))
@@ -117,9 +121,30 @@
         </form>
 
     </div>
+    
 
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+<form action="{{ route('admin.manuscripts.index') }}" method="GET" class="mt-5">
+    <div class="flex flex-col md:flex-row gap-3">
+        <input type="text"
+               name="search"
+               value="{{ request('search') }}"
+               placeholder="Cari karyawan, penulis, judul, jurnal, status, atau keterangan..."
+               class="w-full rounded-2xl border-gray-200 shadow-sm focus:border-green-700 focus:ring-green-700">
 
+        <button type="submit"
+                class="bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-2xl font-semibold transition">
+            Cari
+        </button>
+
+        @if(request('search'))
+            <a href="{{ route('admin.manuscripts.index') }}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-semibold transition text-center">
+                Reset
+            </a>
+        @endif
+    </div>
+</form>
         <div class="overflow-x-auto">
 
             <table class="w-full">
@@ -182,9 +207,23 @@
                             </td>
 
                             <!-- JURNAL -->
-                            <td class="p-4 text-gray-700">
-                                {{ $item->journal }}
-                            </td>
+                           <td class="p-4 text-gray-700">
+
+    @if(Str::startsWith($item->journal, ['http://', 'https://']))
+
+        <a href="{{ $item->journal }}"
+           target="_blank"
+           class="text-blue-600 hover:text-blue-800 underline font-medium">
+            Buka Jurnal
+        </a>
+
+    @else
+
+        {{ $item->journal }}
+
+    @endif
+
+</td>
 
                             <!-- STATUS -->
                             <td class="p-4">
@@ -362,6 +401,9 @@
                 </tbody>
 
             </table>
+            <div class="p-6">
+    {{ $manuscripts->links() }}
+</div>
 
         </div>
 

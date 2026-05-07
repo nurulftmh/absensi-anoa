@@ -10,7 +10,7 @@ class ManuscriptController extends Controller
 {
     public function index()
     {
-        $manuscripts = Manuscript::latest()->get();
+        $manuscripts = Manuscript::latest()->paginate(10);
 
         return view('manuscripts.index', compact('manuscripts'));
     }
@@ -91,10 +91,26 @@ class ManuscriptController extends Controller
         return back()->with('success', 'Data manuscript berhasil dihapus.');
     }
 
-    public function adminIndex()
+   public function adminIndex(Request $request)
 {
-    $manuscripts = Manuscript::with('user')->latest()->get();
+    $search = $request->search;
 
-    return view('admin.manuscripts.index', compact('manuscripts'));
+    $manuscripts = Manuscript::with('user')
+        ->when($search, function ($query) use ($search) {
+            $query->where('author_name', 'like', '%' . $search . '%')
+                ->orWhere('title', 'like', '%' . $search . '%')
+                ->orWhere('journal', 'like', '%' . $search . '%')
+                ->orWhere('status', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%')
+                ->orWhereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+        })
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+    return view('admin.manuscripts.index', compact('manuscripts', 'search'));
 }
 }
