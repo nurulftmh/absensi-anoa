@@ -38,7 +38,7 @@ class LeaveRequestController extends Controller
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Pengajuan izin berhasil dikirim ke admin.');
+        return back()->with('success', 'Pengajuan izin berhasil dikirim ke pimpinan.');
     }
 
     public function adminIndex()

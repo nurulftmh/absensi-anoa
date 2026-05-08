@@ -15,28 +15,55 @@
                             <th class="p-4 text-left">Masuk</th>
                             <th class="p-4 text-left">Pulang</th>
                             <th class="p-4 text-left">Status</th>
+                            <th class="p-4 text-left">Aksi</th>
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-gray-100">
                         @forelse($attendances as $item)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="p-4 font-semibold text-gray-800">{{ $item->user->name }}</td>
-                                <td class="p-4 text-gray-600">{{ $item->date }}</td>
-                                <td class="p-4 text-gray-600">{{ $item->check_in ?? '-' }}</td>
-                                <td class="p-4 text-gray-600">{{ $item->check_out ?? '-' }}</td>
+                                <td class="p-4 font-semibold text-gray-800">
+                                    {{ $item->user->name }}
+                                </td>
+
+                                <td class="p-4 text-gray-600">
+                                    {{ $item->date }}
+                                </td>
+
+                                <td class="p-4 text-gray-600">
+                                    {{ $item->check_in ?? '-' }}
+                                </td>
+
+                                <td class="p-4 text-gray-600">
+                                    {{ $item->check_out ?? '-' }}
+                                </td>
+
                                 <td class="p-4">
                                     @if($item->status == 'hadir')
-                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">HADIR</span>
+                                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            HADIR
+                                        </span>
                                     @elseif($item->status == 'izin')
-                                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">IZIN</span>
+                                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            IZIN
+                                        </span>
                                     @else
-                                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">ALPA</span>
+                                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            ALPA
+                                        </span>
                                     @endif
+                                </td>
+
+                                <td class="p-4">
+                                    <a href="{{ route('admin.attendance.history', $item->user->id) }}"
+                                       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-semibold transition">
+                                        Riwayat
+                                    </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="p-6 text-center text-gray-500">
+                                <td colspan="6" class="p-6 text-center text-gray-500">
                                     Belum ada data absensi.
                                 </td>
                             </tr>

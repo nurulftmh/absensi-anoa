@@ -3,34 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
-use Carbon\Carbon;
+use App\Models\User;
 use App\Models\WorkProgress;
 use App\Models\WorkFile;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
     public function index()
     {
-        $today = now()->toDateString();
-
-        $attendance = Attendance::where('user_id', auth()->id())
-            ->where('date', $today)
-            ->first();
-
-        $attendances = Attendance::where('user_id', auth()->id())
-            ->latest()
-            ->get();
-
-        // TAMBAHAN: ambil progres kerja dan file yang diupload oleh karyawan login
-        $workProgresses = WorkProgress::with('files')
-            ->whereHas('attendance', function ($query) {
-                $query->where('user_id', auth()->id());
-            })
-            ->latest()
-            ->get();
-
-        return view('dashboard', compact('attendance', 'attendances', 'workProgresses'));
+        return $this->adminAttendance();
     }
 
     public function checkIn()
@@ -41,14 +24,25 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->first();
 
-        if ($attendance) {
+        if ($attendance && $attendance->check_in) {
             return back()->with('error', 'Kamu sudah melakukan absen masuk hari ini.');
+        }
+
+        if ($attendance && !$attendance->check_in) {
+            $attendance->update([
+                'check_in' => now()->format('H:i:s'),
+                'check_out' => null,
+                'status' => 'hadir',
+            ]);
+
+            return back()->with('success', 'Absen masuk berhasil.');
         }
 
         Attendance::create([
             'user_id' => auth()->id(),
             'date' => $today,
             'check_in' => now()->format('H:i:s'),
+            'check_out' => null,
             'status' => 'hadir',
         ]);
 
@@ -63,7 +57,7 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->first();
 
-        if (!$attendance) {
+        if (!$attendance || !$attendance->check_in) {
             return back()->with('error', 'Kamu belum melakukan absen masuk.');
         }
 
@@ -80,6 +74,7 @@ class AttendanceController extends Controller
 
         $attendance->update([
             'check_out' => now()->format('H:i:s'),
+            'status' => 'hadir',
         ]);
 
         return back()->with('success', 'Absen pulang berhasil.');
@@ -98,7 +93,7 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->first();
 
-        if (!$attendance) {
+        if (!$attendance || !$attendance->check_in) {
             return back()->with('error', 'Silakan absen masuk dulu.');
         }
 
@@ -124,9 +119,31 @@ class AttendanceController extends Controller
 
     public function adminAttendance()
     {
-        $attendances = Attendance::with('user')->latest()->get();
+        $today = Carbon::today()->toDateString();
 
-        return view('admin.attendance', compact('attendances'));
+        $users = User::where('role', 'user')->get();
+
+        $attendanceData = [];
+
+        foreach ($users as $user) {
+            $attendance = Attendance::where('user_id', $user->id)
+                ->where('date', $today)
+                ->first();
+
+            $attendanceData[] = (object) [
+                'user' => $user,
+                'date' => $today,
+                'check_in' => $attendance?->check_in,
+                'check_out' => $attendance?->check_out,
+                'status' => $attendance
+                    ? ($attendance->status ?? 'hadir')
+                    : 'alpa',
+            ];
+        }
+
+        return view('admin.attendance', [
+            'attendances' => $attendanceData
+        ]);
     }
 
     public function adminProgress()
@@ -139,20 +156,33 @@ class AttendanceController extends Controller
     }
 
     public function progressPage()
+    {
+        $today = now()->toDateString();
+
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->where('date', $today)
+            ->first();
+
+        $workProgresses = WorkProgress::with('files')
+            ->whereHas('attendance', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->latest()
+            ->get();
+
+        return view('work-progress', compact('attendance', 'workProgresses'));
+    }
+
+    public function employeeHistory(User $user)
 {
-    $today = now()->toDateString();
+    $attendances = Attendance::where('user_id', $user->id)
+        ->orderBy('date', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->paginate(15);
 
-    $attendance = Attendance::where('user_id', auth()->id())
-        ->where('date', $today)
-        ->first();
-
-    $workProgresses = WorkProgress::with('files')
-        ->whereHas('attendance', function ($query) {
-            $query->where('user_id', auth()->id());
-        })
-        ->latest()
-        ->get();
-
-    return view('work-progress', compact('attendance', 'workProgresses'));
+    return view('admin.attendance-history', compact('user', 'attendances'));
 }
+
+
+    
 }

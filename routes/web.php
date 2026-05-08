@@ -4,8 +4,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\AdminUserController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManuscriptController;
+use App\Http\Controllers\WorkProgressController;
+use App\Http\Controllers\BookController;
+use App\Models\Attendance;
+use App\Models\WorkProgress;
+use Illuminate\Support\Facades\Route;
+use App\Models\LeaveRequest;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,31 +26,76 @@ Route::get('/dashboard', function () {
         return view('admin.dashboard');
     }
 
-    return app(AttendanceController::class)->index();
+    $today = now()->toDateString();
+
+    $attendance = Attendance::where('user_id', auth()->id())
+        ->where('date', $today)
+        ->first();
+
+    $attendances = Attendance::where('user_id', auth()->id())
+        ->orderBy('date', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $workProgresses = WorkProgress::with('files')
+        ->whereHas('attendance', function ($query) {
+            $query->where('user_id', auth()->id());
+        })
+        ->latest()
+        ->get();
+
+    $rejectedLeaves = \App\Models\LeaveRequest::where('user_id', auth()->id())
+    ->where('status', 'rejected')
+    ->latest()
+    ->get();
+
+    return view('dashboard', compact(
+    'attendance',
+    'attendances',
+    'workProgresses',
+    'rejectedLeaves'
+));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
-| Semua fitur user & admin
+| User & Admin Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
 
-    // ABSEN
     Route::post('/absen-masuk', [AttendanceController::class, 'checkIn'])
         ->name('attendance.checkin');
 
     Route::post('/absen-pulang', [AttendanceController::class, 'checkOut'])
         ->name('attendance.checkout');
 
-    // PROGRES KERJA USER
     Route::get('/progres-kerja', [AttendanceController::class, 'progressPage'])
         ->name('work.progress.page');
 
     Route::post('/progres-kerja', [AttendanceController::class, 'storeProgress'])
         ->name('work.progress.store');
 
-Route::middleware(['auth'])->group(function () {
+    Route::get('/work-progress', [WorkProgressController::class, 'index'])
+        ->name('work.progress.index');
+
+    Route::post('/work-progress', [WorkProgressController::class, 'store'])
+        ->name('work.progress.store.alt');
+
+    Route::patch('/work-progress/{id}', [WorkProgressController::class, 'update'])
+        ->name('work.progress.update');
+
+    Route::get('/books', [BookController::class, 'index'])
+        ->name('books.index');
+
+    Route::post('/books', [BookController::class, 'store'])
+        ->name('books.store');
+
+    Route::patch('/books/{id}', [BookController::class, 'update'])
+        ->name('books.update');
+
+    Route::delete('/books/{id}', [BookController::class, 'destroy'])
+        ->name('books.destroy');
 
     Route::get('/manuscripts', [ManuscriptController::class, 'index'])
         ->name('manuscripts.index');
@@ -58,10 +108,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/manuscripts/{id}', [ManuscriptController::class, 'destroy'])
         ->name('manuscripts.destroy');
-});
 
-
-    // IZIN
     Route::post('/izin', [LeaveRequestController::class, 'store'])
         ->name('leave.store');
 
@@ -74,15 +121,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/izin/{id}/reject', [LeaveRequestController::class, 'reject'])
         ->name('admin.leave.reject');
 
-    // ADMIN ABSENSI
     Route::get('/admin/absensi', [AttendanceController::class, 'adminAttendance'])
         ->name('admin.attendance.index');
 
-    // ADMIN PROGRES
     Route::get('/admin/progres', [AttendanceController::class, 'adminProgress'])
         ->name('admin.progress.index');
 
-    // ADMIN USER
     Route::get('/admin/users', [AdminUserController::class, 'index'])
         ->name('admin.users.index');
 
@@ -93,8 +137,13 @@ Route::middleware(['auth'])->group(function () {
         ->name('admin.users.destroy');
 
     Route::get('/admin/manuscripts', [ManuscriptController::class, 'adminIndex'])
-    ->name('admin.manuscripts.index');
+        ->name('admin.manuscripts.index');
+
+    Route::get('/admin/books', [BookController::class, 'adminIndex'])
+        ->name('admin.books.index');
     
+       Route::get('/admin/riwayat-absen/{user}', [AttendanceController::class, 'employeeHistory'])
+    ->name('admin.attendance.history');
 });
 
 /*
