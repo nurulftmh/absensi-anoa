@@ -15,7 +15,7 @@
                         </h1>
 
                         <p class="text-gray-500 mt-2 max-w-2xl">
-                            Pantau laporan kerja, file lampiran, serta waktu pembaruan progres karyawan secara lebih rapi.
+                            Pantau laporan kerja, file lampiran, serta waktu pembaruan progres karyawan berdasarkan tanggal.
                         </p>
                     </div>
 
@@ -39,115 +39,152 @@
                 </div>
             @endif
 
-            {{-- LIST CARD --}}
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                @foreach($progress as $item)
-                    <div class="group bg-white rounded-3xl shadow-sm border border-green-100 overflow-hidden hover:shadow-xl hover:shadow-green-950/10 transition">
+            {{-- GROUP BY DATE --}}
+            @php
+                $groupedProgress = $progress->groupBy(function ($item) {
+                    return \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
+                });
+            @endphp
 
-                        {{-- CARD HEADER --}}
-                        <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-green-950 to-emerald-800">
-                            <div class="flex items-start justify-between gap-4">
+            <div class="space-y-5">
+                @foreach($groupedProgress as $date => $items)
+                    <details class="group bg-white rounded-3xl border border-green-100 shadow-sm overflow-hidden">
+                        <summary class="list-none cursor-pointer select-none">
+                            <div class="flex items-center justify-between p-6 bg-gradient-to-r from-green-950 to-emerald-800">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl bg-white/15 text-white flex items-center justify-center text-xl font-bold border border-white/20">
-                                        {{ strtoupper(substr($item->attendance->user->name ?? 'U', 0, 1)) }}
+                                    <div class="w-12 h-12 rounded-2xl bg-white/15 text-white flex items-center justify-center text-2xl border border-white/20">
+                                        📅
                                     </div>
 
                                     <div>
-                                        <h2 class="font-bold text-white leading-tight">
-                                            {{ $item->attendance->user->name ?? 'User tidak ditemukan' }}
+                                        <h2 class="text-xl font-bold text-white">
+                                            {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}
                                         </h2>
 
-                                        <p class="text-xs text-green-100 mt-1">
-                                            ID Progres #{{ $item->id }}
+                                        <p class="text-sm text-green-100 mt-1">
+                                            {{ $items->count() }} progres kerja
                                         </p>
                                     </div>
                                 </div>
 
-                                <span class="shrink-0 text-xs bg-white/15 text-white px-3 py-1.5 rounded-full border border-white/20">
-                                    Progres
-                                </span>
-                            </div>
-                        </div>
-
-                        {{-- CARD BODY --}}
-                        <div class="p-5">
-
-                            {{-- TIME INFO --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                                <div class="bg-green-50 rounded-2xl p-4 border border-green-100">
-                                    <p class="text-xs text-gray-500 mb-1">Diunggah</p>
-                                    <p class="text-sm font-bold text-green-950">
-                                        {{ $item->created_at->format('d M Y, H:i') }}
-                                    </p>
-                                </div>
-
-                                <div class="bg-blue-50 rounded-2xl p-4 border border-blue-100">
-                                    <p class="text-xs text-gray-500 mb-1">Terakhir Diedit</p>
-                                    <p class="text-sm font-bold text-blue-900">
-                                        {{ $item->updated_at->format('d M Y, H:i') }}
-                                    </p>
+                                <div class="text-white text-2xl transition group-open:rotate-180">
+                                    ⌄
                                 </div>
                             </div>
+                        </summary>
 
-                            {{-- DESCRIPTION --}}
-                            <div class="mb-5">
-                                <p class="text-sm font-bold text-gray-800 mb-2">
-                                    Deskripsi Progres
-                                </p>
+                        <div class="p-6 bg-gray-50">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                @foreach($items as $item)
+                                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition">
 
-                                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                                    <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                                        {{ $item->description }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {{-- FILES --}}
-                            <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <p class="text-sm font-bold text-gray-800">
-                                        Lampiran File
-                                    </p>
-
-                                    <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
-                                        {{ $item->files ? $item->files->count() : 0 }} file
-                                    </span>
-                                </div>
-
-                                @if($item->files && $item->files->count())
-                                    <div class="space-y-2">
-                                        @foreach($item->files as $file)
-                                            <a href="{{ asset('storage/' . $file->file_path) }}"
-                                               target="_blank"
-                                               class="group/file flex items-center justify-between gap-3 bg-green-50 text-green-800 px-4 py-3 rounded-2xl hover:bg-green-100 border border-green-100 transition">
-
-                                                <div class="flex items-center gap-3 min-w-0">
-                                                    <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                                                        📎
+                                        {{-- CARD HEADER --}}
+                                        <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-white to-green-50">
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-12 h-12 rounded-2xl bg-green-100 text-green-800 flex items-center justify-center text-xl font-bold">
+                                                        {{ strtoupper(substr($item->attendance->user->name ?? 'U', 0, 1)) }}
                                                     </div>
 
-                                                    <span class="truncate text-sm font-semibold">
-                                                        {{ $file->file_name }}
+                                                    <div>
+                                                        <h2 class="font-bold text-gray-900 leading-tight">
+                                                            {{ $item->attendance->user->name ?? 'User tidak ditemukan' }}
+                                                        </h2>
+
+                                                        <p class="text-xs text-gray-500 mt-1">
+                                                            ID Progres #{{ $item->id }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
+                                                    Progres
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {{-- BODY --}}
+                                        <div class="p-5">
+
+                                            {{-- TIME --}}
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                                <div class="bg-green-50 rounded-2xl p-4 border border-green-100">
+                                                    <p class="text-xs text-gray-500 mb-1">Diunggah</p>
+                                                    <p class="text-sm font-bold text-green-950">
+                                                        {{ $item->created_at->format('H:i') }}
+                                                    </p>
+                                                </div>
+
+                                                <div class="bg-blue-50 rounded-2xl p-4 border border-blue-100">
+                                                    <p class="text-xs text-gray-500 mb-1">Terakhir Diedit</p>
+                                                    <p class="text-sm font-bold text-blue-900">
+                                                        {{ $item->updated_at->format('H:i') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {{-- DESCRIPTION --}}
+                                            <div class="mb-5">
+                                                <p class="text-sm font-bold text-gray-800 mb-2">
+                                                    Deskripsi Progres
+                                                </p>
+
+                                                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                                                    <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                                                        {{ $item->description }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {{-- FILES --}}
+                                            <div>
+                                                <div class="flex items-center justify-between mb-3">
+                                                    <p class="text-sm font-bold text-gray-800">
+                                                        Lampiran File
+                                                    </p>
+
+                                                    <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+                                                        {{ $item->files ? $item->files->count() : 0 }} file
                                                     </span>
                                                 </div>
 
-                                                <span class="shrink-0 text-xs font-bold text-green-700 group-hover/file:translate-x-1 transition">
-                                                    Buka →
-                                                </span>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <div class="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-5 text-center">
-                                        <p class="text-gray-400 text-sm">
-                                            Tidak ada file lampiran.
-                                        </p>
-                                    </div>
-                                @endif
-                            </div>
+                                                @if($item->files && $item->files->count())
+                                                    <div class="space-y-2">
+                                                        @foreach($item->files as $file)
+                                                            <a href="{{ asset('storage/' . $file->file_path) }}"
+                                                               target="_blank"
+                                                               class="flex items-center justify-between gap-3 bg-green-50 text-green-800 px-4 py-3 rounded-2xl hover:bg-green-100 border border-green-100 transition">
+                                                                <div class="flex items-center gap-3 min-w-0">
+                                                                    <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                                                                        📎
+                                                                    </div>
 
+                                                                    <span class="truncate text-sm font-semibold">
+                                                                        {{ $file->file_name }}
+                                                                    </span>
+                                                                </div>
+
+                                                                <span class="shrink-0 text-xs font-bold">
+                                                                    Buka →
+                                                                </span>
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <div class="bg-gray-50 border border-dashed border-gray-200 rounded-2xl p-5 text-center">
+                                                        <p class="text-gray-400 text-sm">
+                                                            Tidak ada file lampiran.
+                                                        </p>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    </details>
                 @endforeach
             </div>
 
