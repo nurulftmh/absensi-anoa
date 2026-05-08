@@ -1,7 +1,6 @@
 <x-app-layout>
-    @if(isset($rejectedLeaves) && $rejectedLeaves->count() > 0)
-    <div class="mb-5 space-y-3">
-        @foreach($rejectedLeaves as $leave)
+     @if(isset($rejectedLeave) && $rejectedLeave)
+        <div class="mb-5">
             <div class="bg-red-50 border border-red-200 text-red-800 px-5 py-4 rounded-2xl shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="text-2xl">❌</div>
@@ -14,20 +13,19 @@
                         <p class="text-sm mt-1">
                             Izin tanggal
                             <span class="font-semibold">
-                                {{ \Carbon\Carbon::parse($leave->date)->format('d M Y') }}
+                                {{ \Carbon\Carbon::parse($rejectedLeave->date)->format('d M Y') }}
                             </span>
                             ditolak oleh pimpinan.
                         </p>
 
                         <p class="text-sm mt-1 text-red-700">
-                            Alasan pengajuan: {{ $leave->reason }}
+                            Alasan pengajuan: {{ $rejectedLeave->reason }}
                         </p>
                     </div>
                 </div>
             </div>
-        @endforeach
-    </div>
-@endif
+        </div>
+    @endif
     <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-8">
         <div class="px-6 max-w-7xl mx-auto">
 

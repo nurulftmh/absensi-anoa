@@ -9,37 +9,39 @@ use Illuminate\Http\Request;
 class LeaveRequestController extends Controller
 {
     public function store(Request $request)
-    {
-        $request->validate([
-            'date' => 'required|date',
-            'reason' => 'required|string',
-            'proof_file' => 'nullable|file|max:5120',
-        ]);
+{
+    $request->validate([
+        'date' => 'required|date|after_or_equal:today',
+        'reason' => 'required|string',
+        'proof_file' => 'nullable|file|max:5120',
+    ], [
+        'date.after_or_equal' => 'Tanggal izin tidak boleh tanggal yang sudah berlalu.',
+    ]);
 
-        $attendance = Attendance::where('user_id', auth()->id())
-            ->where('date', $request->date)
-            ->first();
+    $attendance = Attendance::where('user_id', auth()->id())
+        ->where('date', $request->date)
+        ->first();
 
-        if ($attendance && $attendance->check_in) {
-            return back()->with('error', 'Kamu sudah absen di tanggal ini, tidak bisa mengajukan izin.');
-        }
-
-        $proofPath = null;
-
-        if ($request->hasFile('proof_file')) {
-            $proofPath = $request->file('proof_file')->store('leave-proofs', 'public');
-        }
-
-        LeaveRequest::create([
-            'user_id' => auth()->id(),
-            'date' => $request->date,
-            'reason' => $request->reason,
-            'proof_file' => $proofPath,
-            'status' => 'pending',
-        ]);
-
-        return back()->with('success', 'Pengajuan izin berhasil dikirim ke pimpinan.');
+    if ($attendance && $attendance->check_in) {
+        return back()->with('error', 'Kamu sudah absen di tanggal ini, tidak bisa mengajukan izin.');
     }
+
+    $proofPath = null;
+
+    if ($request->hasFile('proof_file')) {
+        $proofPath = $request->file('proof_file')->store('leave-proofs', 'public');
+    }
+
+    LeaveRequest::create([
+        'user_id' => auth()->id(),
+        'date' => $request->date,
+        'reason' => $request->reason,
+        'proof_file' => $proofPath,
+        'status' => 'pending',
+    ]);
+
+    return back()->with('success', 'Pengajuan izin berhasil dikirim ke pimpinan.');
+}
 
     public function adminIndex()
     {

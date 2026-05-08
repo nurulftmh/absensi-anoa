@@ -45,6 +45,13 @@ class AttendanceController extends Controller
             'check_out' => null,
             'status' => 'hadir',
         ]);
+        \App\Models\LeaveRequest::where('user_id', auth()->id())
+    ->where('status', 'rejected')
+    ->update([
+        'is_read' => true
+    ]);
+
+return back()->with('success', 'Absen masuk berhasil.');
 
         return back()->with('success', 'Absen masuk berhasil.');
     }

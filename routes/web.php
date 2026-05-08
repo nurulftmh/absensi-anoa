@@ -44,16 +44,17 @@ Route::get('/dashboard', function () {
         ->latest()
         ->get();
 
-    $rejectedLeaves = \App\Models\LeaveRequest::where('user_id', auth()->id())
+    $rejectedLeave = \App\Models\LeaveRequest::where('user_id', auth()->id())
     ->where('status', 'rejected')
+    ->where('is_read', false)
     ->latest()
-    ->get();
+    ->first();
 
     return view('dashboard', compact(
     'attendance',
     'attendances',
     'workProgresses',
-    'rejectedLeaves'
+    'rejectedLeave'
 ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
