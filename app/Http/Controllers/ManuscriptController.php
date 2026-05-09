@@ -8,11 +8,25 @@ use Illuminate\Support\Facades\Storage;
 
 class ManuscriptController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $manuscripts = Manuscript::latest()->paginate(10);
+        $search = $request->search;
 
-        return view('manuscripts.index', compact('manuscripts'));
+        $manuscripts = Manuscript::with('user')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('author_name', 'like', '%' . $search . '%')
+                        ->orWhere('title', 'like', '%' . $search . '%')
+                        ->orWhere('journal', 'like', '%' . $search . '%')
+                        ->orWhere('status', 'like', '%' . $search . '%')
+                        ->orWhere('description', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('manuscripts.index', compact('manuscripts', 'search'));
     }
 
     public function store(Request $request)
@@ -22,6 +36,7 @@ class ManuscriptController extends Controller
             'title' => 'required',
             'journal' => 'required',
             'status' => 'required',
+            'description' => 'nullable',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -51,6 +66,7 @@ class ManuscriptController extends Controller
             'title' => 'required',
             'journal' => 'required',
             'status' => 'required',
+            'description' => 'nullable',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -91,26 +107,28 @@ class ManuscriptController extends Controller
         return back()->with('success', 'Data manuscript berhasil dihapus.');
     }
 
-   public function adminIndex(Request $request)
-{
-    $search = $request->search;
+    public function adminIndex(Request $request)
+    {
+        $search = $request->search;
 
-    $manuscripts = Manuscript::with('user')
-        ->when($search, function ($query) use ($search) {
-            $query->where('author_name', 'like', '%' . $search . '%')
-                ->orWhere('title', 'like', '%' . $search . '%')
-                ->orWhere('journal', 'like', '%' . $search . '%')
-                ->orWhere('status', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->orWhereHas('user', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('email', 'like', '%' . $search . '%');
+        $manuscripts = Manuscript::with('user')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('author_name', 'like', '%' . $search . '%')
+                        ->orWhere('title', 'like', '%' . $search . '%')
+                        ->orWhere('journal', 'like', '%' . $search . '%')
+                        ->orWhere('status', 'like', '%' . $search . '%')
+                        ->orWhere('description', 'like', '%' . $search . '%')
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('name', 'like', '%' . $search . '%')
+                                ->orWhere('email', 'like', '%' . $search . '%');
+                        });
                 });
-        })
-        ->latest()
-        ->paginate(10)
-        ->withQueryString();
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
-    return view('admin.manuscripts.index', compact('manuscripts', 'search'));
-}
+        return view('admin.manuscripts.index', compact('manuscripts', 'search'));
+    }
 }

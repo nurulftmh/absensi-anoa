@@ -38,112 +38,123 @@
             @endif
 
             {{-- FORM TAMBAH COMPACT --}}
-<div class="bg-white rounded-3xl shadow-sm border border-green-100 p-5 mb-8">
+            <div class="bg-white rounded-3xl shadow-sm border border-green-100 p-5 mb-8">
 
-    <div class="flex items-center justify-between mb-4">
-        <div>
-            <h2 class="text-lg font-bold text-gray-800">
-                Tambah Manuscript
-            </h2>
-            <p class="text-xs text-gray-500 mt-1">
-                Isi data manuscript secara ringkas.
-            </p>
-        </div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">
+                            Tambah Manuscript
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Isi data manuscript secara ringkas.
+                        </p>
+                    </div>
 
-        <div class="hidden md:flex w-11 h-11 rounded-2xl bg-green-100 text-green-800 items-center justify-center text-xl">
-            📄
-        </div>
-    </div>
+                    <div class="hidden md:flex w-11 h-11 rounded-2xl bg-green-100 text-green-800 items-center justify-center text-xl">
+                        📄
+                    </div>
+                </div>
 
-    <form action="{{ route('manuscripts.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
+                <form action="{{ route('manuscripts.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
 
-            <div>
-                <label class="block mb-1.5 font-semibold text-xs text-gray-600">
-                    Nama Penulis
-                </label>
-                <input type="text"
-                       name="author_name"
-                       placeholder="Nama penulis"
-                       class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700"
-                       required>
+                        <div>
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Nama Penulis
+                            </label>
+                            <input type="text"
+                                   name="author_name"
+                                   placeholder="Nama penulis"
+                                   class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Jurnal
+                            </label>
+                            <input type="text"
+                                   name="journal"
+                                   placeholder="Nama/link jurnal"
+                                   class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700"
+                                   required>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Link Docs
+                            </label>
+
+                            <input type="url"
+                                   name="docs_link"
+                                   placeholder="https://docs.google.com/..."
+                                   class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Status
+                            </label>
+                            <select name="status"
+                                    class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700">
+                                <option value="On Progress">On Progress</option>
+                                <option value="Draft">Draft</option>
+                                <option value="Submitted">Submitted</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Under Review">Under Review</option>
+                                <option value="Accepted">Accepted</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Published">Published</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3">
+
+                        <div class="md:col-span-2">
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Judul Manuscript
+                            </label>
+                            <textarea name="title"
+                                      rows="2"
+                                      placeholder="Masukkan judul manuscript"
+                                      class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700"
+                                      required></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Keterangan
+                            </label>
+                            <input type="text"
+                                   name="description"
+                                   placeholder="Keterangan singkat"
+                                   class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700">
+                        </div>
+
+                    </div>
+
+                    <div class="mt-3 flex flex-col md:flex-row md:items-end gap-3">
+
+                        <div class="flex-1">
+                            <label class="block mb-1.5 font-semibold text-xs text-gray-600">
+                                Upload Foto
+                            </label>
+                            <input type="file"
+                                   name="photo"
+                                   class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-gray-50">
+                        </div>
+
+                        <button class="bg-green-800 hover:bg-green-900 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition">
+                            Simpan Manuscript
+                        </button>
+
+                    </div>
+                </form>
             </div>
-
-            <div>
-                <label class="block mb-1.5 font-semibold text-xs text-gray-600">
-                    Jurnal
-                </label>
-                <input type="text"
-                       name="journal"
-                       placeholder="Nama/link jurnal"
-                       class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700"
-                       required>
-            </div>
-
-            <div>
-                <label class="block mb-1.5 font-semibold text-xs text-gray-600">
-                    Status
-                </label>
-                <select name="status"
-                        class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700">
-                    <option value="On Progress">On Progress</option>
-                    <option value="Draft">Draft</option>
-                    <option value="Submitted">Submitted</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Under Review">Under Review</option>
-                    <option value="Accepted">Accepted</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Published">Published</option>
-                </select>
-            </div>
-
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-
-            <div class="md:col-span-2">
-                <label class="block mb-1.5 font-semibold text-xs text-gray-600">
-                    Judul Manuscript
-                </label>
-                <textarea name="title"
-                          rows="2"
-                          placeholder="Masukkan judul manuscript"
-                          class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700"
-                          required></textarea>
-            </div>
-
-            <div>
-                <label class="block mb-1.5 font-semibold text-xs text-gray-600">
-                    Keterangan
-                </label>
-                <input type="text"
-                       name="description"
-                       placeholder="Keterangan singkat"
-                       class="w-full rounded-xl border-gray-200 text-sm py-2.5 focus:border-green-700 focus:ring-green-700">
-            </div>
-
-        </div>
-
-        <div class="mt-3 flex flex-col md:flex-row md:items-end gap-3">
-
-            <div class="flex-1">
-                <label class="block mb-1.5 font-semibold text-xs text-gray-600">
-                    Upload Foto
-                </label>
-                <input type="file"
-                       name="photo"
-                       class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-gray-50">
-            </div>
-
-            <button class="bg-green-800 hover:bg-green-900 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition">
-                Simpan Manuscript
-            </button>
-
-        </div>
-    </form>
-</div>
 
             {{-- TABLE CARD --}}
             <div class="bg-white rounded-3xl shadow-xl shadow-green-950/5 border border-green-100 overflow-hidden">
@@ -192,6 +203,7 @@
                                 <th class="px-5 py-4 text-left font-semibold">Penulis</th>
                                 <th class="px-5 py-4 text-left font-semibold">Judul</th>
                                 <th class="px-5 py-4 text-left font-semibold">Jurnal</th>
+                                <th class="px-5 py-4 text-left font-semibold">Docs</th>
                                 <th class="px-5 py-4 text-left font-semibold">Status</th>
                                 <th class="px-5 py-4 text-left font-semibold">Keterangan</th>
                                 <th class="px-5 py-4 text-left font-semibold">Aksi</th>
@@ -248,6 +260,21 @@
                                         @else
                                             <span class="text-gray-700">
                                                 {{ $item->journal }}
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- DOCS --}}
+                                    <td class="px-5 py-4">
+                                        @if($item->docs_link)
+                                            <a href="{{ $item->docs_link }}"
+                                               target="_blank"
+                                               class="inline-flex items-center gap-1 text-indigo-700 hover:text-indigo-900 font-semibold bg-indigo-50 px-3 py-1.5 rounded-xl">
+                                                📄 Buka Docs
+                                            </a>
+                                        @else
+                                            <span class="text-gray-400">
+                                                -
                                             </span>
                                         @endif
                                     </td>
@@ -325,22 +352,30 @@
 
                                 {{-- FORM EDIT --}}
                                 <tr id="edit-{{ $item->id }}" class="hidden bg-gray-50">
-                                    <td colspan="7" class="p-5">
+                                    <td colspan="8" class="p-5">
                                         <form action="{{ route('manuscripts.update', $item->id) }}"
                                               method="POST"
                                               enctype="multipart/form-data">
                                             @csrf
                                             @method('PATCH')
 
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 <input type="text"
                                                        name="author_name"
                                                        value="{{ $item->author_name }}"
+                                                       placeholder="Nama Penulis"
                                                        class="rounded-2xl border-gray-200">
 
                                                 <input type="text"
                                                        name="journal"
                                                        value="{{ $item->journal }}"
+                                                       placeholder="Jurnal"
+                                                       class="rounded-2xl border-gray-200">
+
+                                                <input type="url"
+                                                       name="docs_link"
+                                                       value="{{ $item->docs_link }}"
+                                                       placeholder="Link Google Docs"
                                                        class="rounded-2xl border-gray-200">
                                             </div>
 
@@ -385,7 +420,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-16 text-center">
+                                    <td colspan="8" class="px-6 py-16 text-center">
                                         <div class="flex flex-col items-center">
                                             <div class="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center text-4xl mb-4">
                                                 📭

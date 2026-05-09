@@ -273,7 +273,7 @@
                         </p>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-green-950 text-white">

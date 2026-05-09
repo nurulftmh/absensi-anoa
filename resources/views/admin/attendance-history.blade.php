@@ -23,7 +23,32 @@
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="mb-5">
+    <form method="GET" action="{{ route('admin.attendance') }}">
 
+        <div class="flex flex-col md:flex-row gap-3">
+
+            <input type="text"
+                   name="search"
+                   value="{{ request('search') }}"
+                   placeholder="Cari nama atau email karyawan..."
+                   class="w-full rounded-2xl border-gray-200 shadow-sm focus:border-green-700 focus:ring-green-700">
+
+            <button class="bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-2xl font-semibold">
+                Cari
+            </button>
+
+            @if(request('search'))
+                <a href="{{ route('admin.attendance') }}"
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-semibold text-center">
+                    Reset
+                </a>
+            @endif
+
+        </div>
+
+    </form>
+</div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>

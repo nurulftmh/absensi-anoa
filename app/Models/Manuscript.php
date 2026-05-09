@@ -11,9 +11,11 @@ class Manuscript extends Model
         'author_name',
         'title',
         'journal',
+        'docs_link',
         'status',
         'description',
         'photo',
+        
     ];
 
     public function user()

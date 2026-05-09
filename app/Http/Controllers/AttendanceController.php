@@ -124,43 +124,65 @@ return back()->with('success', 'Absen masuk berhasil.');
         return back()->with('success', 'Progres kerja berhasil disimpan.');
     }
 
-    public function adminAttendance()
-    {
-        $today = Carbon::today()->toDateString();
+    public function adminAttendance(Request $request)
+{
+    $search = $request->search;
+    $today = Carbon::today()->toDateString();
 
-        $users = User::where('role', 'user')->get();
+    $users = User::where('role', 'user')
+        ->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
+        })
+        ->paginate(15)
+        ->withQueryString();
 
-        $attendanceData = [];
+    $attendanceData = collect();
 
-        foreach ($users as $user) {
-            $attendance = Attendance::where('user_id', $user->id)
-                ->where('date', $today)
-                ->first();
+    foreach ($users as $user) {
 
-            $attendanceData[] = (object) [
-                'user' => $user,
-                'date' => $today,
-                'check_in' => $attendance?->check_in,
-                'check_out' => $attendance?->check_out,
-                'status' => $attendance
-                    ? ($attendance->status ?? 'hadir')
-                    : 'alpa',
-            ];
-        }
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $today)
+            ->first();
 
-        return view('admin.attendance', [
-            'attendances' => $attendanceData
+        $attendanceData->push((object) [
+            'user' => $user,
+            'date' => $today,
+            'check_in' => $attendance?->check_in,
+            'check_out' => $attendance?->check_out,
+            'status' => $attendance
+                ? ($attendance->status ?? 'hadir')
+                : 'alpa',
         ]);
     }
 
-    public function adminProgress()
-    {
-        $progress = WorkProgress::with(['attendance.user', 'files'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+    return view('admin.attendance', [
+        'attendances' => $attendanceData,
+        'users' => $users,
+        'search' => $search,
+    ]);
+}
 
-        return view('admin.progress', compact('progress'));
-    }
+   public function adminProgress(Request $request)
+{
+    $search = $request->search;
+
+    $progress = WorkProgress::with(['attendance.user', 'files'])
+        ->when($search, function ($query) use ($search) {
+
+            $query->where('description', 'like', '%' . $search . '%')
+                ->orWhereHas('attendance.user', function ($userQuery) use ($search) {
+
+                    $userQuery->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+        })
+        ->latest()
+        ->paginate(15)
+        ->withQueryString();
+
+    return view('admin.progress', compact('progress', 'search'));
+}
 
     public function progressPage()
     {

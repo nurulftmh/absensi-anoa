@@ -72,6 +72,7 @@
                                 <th class="px-5 py-4 text-left font-semibold">Tanggal Masuk</th>
                                 <th class="px-5 py-4 text-left font-semibold">Penulis</th>
                                 <th class="px-5 py-4 text-left font-semibold">Judul Buku</th>
+                                <th class="px-5 py-4 text-left font-semibold">Docs</th>
                                 <th class="px-5 py-4 text-left font-semibold">Status</th>
                                 <th class="px-5 py-4 text-left font-semibold">Catatan</th>
                             </tr>
@@ -120,16 +121,31 @@
                                         </div>
                                     </td>
 
+                                    {{-- DOCS --}}
+                                    <td class="px-5 py-4">
+                                        @if($book->docs_link)
+                                            <a href="{{ $book->docs_link }}"
+                                               target="_blank"
+                                               class="inline-flex items-center gap-1 text-indigo-700 hover:text-indigo-900 font-semibold bg-indigo-50 px-3 py-1.5 rounded-xl">
+                                                📄 Buka Docs
+                                            </a>
+                                        @else
+                                            <span class="text-gray-400">
+                                                -
+                                            </span>
+                                        @endif
+                                    </td>
+
                                     {{-- STATUS --}}
                                     <td class="px-5 py-4">
                                         @if($book->status == 'On Progress')
                                             <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
-                                                   ✍️ On Progress
+                                                ✍️ On Progress
                                             </span>
                                         @elseif($book->status == 'Draft')
                                             <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">
                                                 📝 Draft
-                                       
+                                            </span>
                                         @elseif($book->status == 'Selesai')
                                             <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
                                                 ✅ Selesai
@@ -151,7 +167,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-16 text-center">
+                                    <td colspan="7" class="px-6 py-16 text-center">
                                         <div class="flex flex-col items-center">
                                             <div class="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center text-4xl mb-4">
                                                 📚

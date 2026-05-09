@@ -11,6 +11,7 @@ class Book extends Model
         'entry_date',
         'author_name',
         'title',
+        'docs_link',
         'status',
         'note',
     ];

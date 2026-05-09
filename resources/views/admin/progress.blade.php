@@ -1,7 +1,32 @@
 <x-app-layout>
     <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-8">
         <div class="px-6 max-w-7xl mx-auto">
+<div class="mb-5">
+    <form method="GET" action="{{ route('admin.progress.index') }}">
 
+        <div class="flex flex-col md:flex-row gap-3">
+
+            <input type="text"
+                   name="search"
+                   value="{{ request('search') }}"
+                   placeholder="Cari nama karyawan atau progres kerja..."
+                   class="w-full rounded-2xl border-gray-200 shadow-sm focus:border-green-700 focus:ring-green-700">
+
+            <button class="bg-green-800 hover:bg-green-900 text-white px-6 py-3 rounded-2xl font-semibold">
+                Cari
+            </button>
+
+            @if(request('search'))
+                <a href="{{ route('admin.progress.index') }}"
+                   class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-semibold text-center">
+                    Reset
+                </a>
+            @endif
+
+        </div>
+
+    </form>
+</div>
             {{-- HEADER --}}
             <div class="mb-8 bg-white/80 backdrop-blur rounded-3xl shadow-sm border border-green-100 p-6">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
