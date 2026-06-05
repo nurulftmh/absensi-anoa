@@ -213,28 +213,30 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($manuscripts as $item)
                                 <tr class="hover:bg-green-50/70 transition">
+{{-- FOTO --}}
+<td class="px-5 py-4">
+    @if($item->photo)
+        <div class="flex items-center gap-3">
 
-                                    {{-- FOTO --}}
-                                    <td class="px-5 py-4">
-                                        @if($item->photo)
-                                            <div class="flex items-center gap-3">
-                                                <img src="{{ asset('storage/' . $item->photo) }}"
-                                                     class="w-16 h-16 object-cover rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition"
-                                                     onclick="openImage('{{ asset('storage/' . $item->photo) }}')">
+            <img src="{{ asset('public/storage/' . $item->photo) }}"
+                 alt="Foto Manuscript"
+                 class="w-16 h-16 object-cover rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition"
+                 onclick="openImage('{{ asset('public/storage/' . $item->photo) }}')"
+                 onerror="this.onerror=null;this.src='https://placehold.co/80x80/e5e7eb/6b7280?text=No+Image';">
 
-                                                <button type="button"
-                                                        onclick="openImage('{{ asset('storage/' . $item->photo) }}')"
-                                                        class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-xl shadow-sm transition">
-                                                    Lihat
-                                                </button>
-                                            </div>
-                                        @else
-                                            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-xs border">
-                                                No Image
-                                            </div>
-                                        @endif
-                                    </td>
+            <button type="button"
+                    onclick="openImage('{{ asset('public/storage/' . $item->photo) }}')"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-xl shadow-sm transition">
+                Lihat
+            </button>
 
+        </div>
+    @else
+        <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-xs border">
+            No Image
+        </div>
+    @endif
+</td>
                                     {{-- PENULIS --}}
                                     <td class="px-5 py-4">
                                         <div class="font-semibold text-gray-800">

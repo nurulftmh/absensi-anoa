@@ -24,7 +24,7 @@
 
             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
 <div class="mb-5">
-    <form method="GET" action="{{ route('admin.attendance') }}">
+    <form method="GET" action="{{ route('admin.attendance.history', $user->id) }}">
 
         <div class="flex flex-col md:flex-row gap-3">
 
@@ -39,7 +39,7 @@
             </button>
 
             @if(request('search'))
-                <a href="{{ route('admin.attendance') }}"
+                <a href="{{ route('admin.attendance.history', $user->id) }}"
                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-semibold text-center">
                     Reset
                 </a>
