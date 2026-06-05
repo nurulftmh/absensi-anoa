@@ -10,7 +10,6 @@ use App\Http\Controllers\BookController;
 use App\Models\Attendance;
 use App\Models\WorkProgress;
 use Illuminate\Support\Facades\Route;
-use App\Models\LeaveRequest;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,18 +43,11 @@ Route::get('/dashboard', function () {
         ->latest()
         ->get();
 
-    $rejectedLeave = \App\Models\LeaveRequest::where('user_id', auth()->id())
-    ->where('status', 'rejected')
-    ->where('is_read', false)
-    ->latest()
-    ->first();
-
     return view('dashboard', compact(
-    'attendance',
-    'attendances',
-    'workProgresses',
-    'rejectedLeave'
-));
+        'attendance',
+        'attendances',
+        'workProgresses'
+    ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 /*
@@ -65,12 +57,30 @@ Route::get('/dashboard', function () {
 */
 Route::middleware(['auth'])->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Notification Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/notifications/leave/read', [LeaveRequestController::class, 'markLeaveNotificationsAsRead'])
+        ->name('notifications.leave.read');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attendance Routes
+    |--------------------------------------------------------------------------
+    */
     Route::post('/absen-masuk', [AttendanceController::class, 'checkIn'])
         ->name('attendance.checkin');
 
     Route::post('/absen-pulang', [AttendanceController::class, 'checkOut'])
         ->name('attendance.checkout');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Work Progress Routes
+    |--------------------------------------------------------------------------
+    */
     Route::get('/progres-kerja', [AttendanceController::class, 'progressPage'])
         ->name('work.progress.page');
 
@@ -86,6 +96,11 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/work-progress/{id}', [WorkProgressController::class, 'update'])
         ->name('work.progress.update');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Book Routes
+    |--------------------------------------------------------------------------
+    */
     Route::get('/books', [BookController::class, 'index'])
         ->name('books.index');
 
@@ -98,6 +113,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/books/{id}', [BookController::class, 'destroy'])
         ->name('books.destroy');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Manuscript Routes
+    |--------------------------------------------------------------------------
+    */
     Route::get('/manuscripts', [ManuscriptController::class, 'index'])
         ->name('manuscripts.index');
 
@@ -110,6 +130,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/manuscripts/{id}', [ManuscriptController::class, 'destroy'])
         ->name('manuscripts.destroy');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Leave Request Routes
+    |--------------------------------------------------------------------------
+    */
     Route::post('/izin', [LeaveRequestController::class, 'store'])
         ->name('leave.store');
 
@@ -122,6 +147,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/izin/{id}/reject', [LeaveRequestController::class, 'reject'])
         ->name('admin.leave.reject');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Routes
+    |--------------------------------------------------------------------------
+    */
     Route::get('/admin/absensi', [AttendanceController::class, 'adminAttendance'])
         ->name('admin.attendance.index');
 
@@ -142,9 +172,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/books', [BookController::class, 'adminIndex'])
         ->name('admin.books.index');
-    
-       Route::get('/admin/riwayat-absen/{user}', [AttendanceController::class, 'employeeHistory'])
-    ->name('admin.attendance.history');
+
+    Route::get('/admin/riwayat-absen/{user}', [AttendanceController::class, 'employeeHistory'])
+        ->name('admin.attendance.history');
 });
 
 /*
